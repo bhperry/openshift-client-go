@@ -9025,7 +9025,7 @@
           "default": ""
         },
         "controlPlaneTopology": {
-          "description": "controlPlaneTopology expresses the expectations for operands that normally run on control nodes. The default is 'HighlyAvailable', which represents the behavior operators have in a \"normal\" cluster. The 'SingleReplica' mode will be used in single-node deployments and the operators should not configure the operand for highly-available operation The 'External' mode indicates that the control plane is hosted externally to the cluster and that its components are not visible within the cluster. The 'HighlyAvailableArbiter' mode indicates that the control plane will consist of 2 control-plane nodes that run conventional services and 1 smaller sized arbiter node that runs a bare minimum of services to maintain quorum.",
+          "description": "controlPlaneTopology expresses the expectations for operands that normally run on control nodes. The default is 'HighlyAvailable', which represents the behavior operators have in a \"normal\" cluster. The 'SingleReplica' mode will be used in single-node deployments and the operators should not configure the operand for highly-available operation The 'DualReplica' mode is used in two-node deployments with fencing. The 'External' mode indicates that the control plane is hosted externally to the cluster and that its components are not visible within the cluster. The 'HighlyAvailableArbiter' mode indicates that the control plane will consist of 2 control-plane nodes that run conventional services and 1 smaller sized arbiter node that runs a bare minimum of services to maintain quorum.",
           "type": "string",
           "default": ""
         },
@@ -10635,6 +10635,11 @@
             "type": "string"
           },
           "x-kubernetes-list-type": "atomic"
+        },
+        "maxAllowedAddressPairs": {
+          "description": "maxAllowedAddressPairs is the maximum number of allowed address pairs configured in Neutron. When set, the value must be between 1 and 2,147,483,647 inclusive. When omitted, it means there is no opinion and the platform will choose a reasonable default which is subject to change. Currently, the default value matches Neutron's default.",
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -13159,7 +13164,7 @@
           "type": "string"
         },
         "staticConfigs": {
-          "description": "staticConfigs is a list of statically configured Alertmanager endpoints in the form of `<host>:<port>`. Each entry must be a valid hostname, IPv4 address, or IPv6 address (in brackets) followed by a colon and a valid port number (1-65535). Examples: \"alertmanager.example.com:9093\", \"192.168.1.100:9093\", \"[::1]:9093\" At least one endpoint must be specified (minimum 1, maximum 10 endpoints). Each entry must be unique and non-empty (empty string is invalid).",
+          "description": "staticConfigs is a list of statically configured Alertmanager endpoints. Each entry must be a valid hostname, IPv4 address, or IPv6 address (in brackets), optionally followed by a colon and a port number (1-65535). When the port is omitted, Prometheus uses the default port for the configured scheme (80 for HTTP, 443 for HTTPS). Examples: \"alertmanager.example.com\", \"alertmanager.example.com:9093\", \"192.168.1.100:9093\", \"[::1]:9093\" At least one endpoint must be specified (minimum 1, maximum 10 endpoints). Each entry must be unique and non-empty (empty string is invalid).",
           "type": "array",
           "items": {
             "type": "string"
@@ -13303,83 +13308,6 @@
         }
       ]
     },
-    "com.github.openshift.api.config.v1alpha1.Backup": {
-      "description": "Backup provides configuration for performing backups of the openshift cluster.\n\nCompatibility level 4: No compatibility is provided, the API can change at any point for any reason. These capabilities should not be used by applications needing long term support.",
-      "type": "object",
-      "required": [
-        "spec"
-      ],
-      "properties": {
-        "apiVersion": {
-          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
-          "type": "string"
-        },
-        "kind": {
-          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
-          "type": "string"
-        },
-        "metadata": {
-          "description": "metadata is the standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata",
-          "default": {},
-          "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta"
-        },
-        "spec": {
-          "description": "spec holds user settable values for configuration",
-          "default": {},
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.BackupSpec"
-        },
-        "status": {
-          "description": "status holds observed values from the cluster. They may not be overridden.",
-          "default": {},
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.BackupStatus"
-        }
-      }
-    },
-    "com.github.openshift.api.config.v1alpha1.BackupList": {
-      "description": "BackupList is a collection of items\n\nCompatibility level 4: No compatibility is provided, the API can change at any point for any reason. These capabilities should not be used by applications needing long term support.",
-      "type": "object",
-      "required": [
-        "metadata",
-        "items"
-      ],
-      "properties": {
-        "apiVersion": {
-          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
-          "type": "string"
-        },
-        "items": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.Backup"
-          }
-        },
-        "kind": {
-          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
-          "type": "string"
-        },
-        "metadata": {
-          "description": "metadata is the standard list's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata",
-          "default": {},
-          "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ListMeta"
-        }
-      }
-    },
-    "com.github.openshift.api.config.v1alpha1.BackupSpec": {
-      "type": "object",
-      "required": [
-        "etcd"
-      ],
-      "properties": {
-        "etcd": {
-          "description": "etcd specifies the configuration for periodic backups of the etcd cluster",
-          "default": {},
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.EtcdBackupSpec"
-        }
-      }
-    },
-    "com.github.openshift.api.config.v1alpha1.BackupStatus": {
-      "type": "object"
-    },
     "com.github.openshift.api.config.v1alpha1.BasicAuth": {
       "description": "BasicAuth defines basic authentication settings for the remote write endpoint URL.",
       "type": "object",
@@ -13397,17 +13325,6 @@
           "description": "username defines the secret reference containing the username for basic authentication. The secret must exist in the openshift-monitoring namespace.",
           "default": {},
           "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.SecretKeySelector"
-        }
-      }
-    },
-    "com.github.openshift.api.config.v1alpha1.CertificateConfig": {
-      "description": "CertificateConfig specifies configuration parameters for certificates. At least one property must be specified.",
-      "type": "object",
-      "properties": {
-        "key": {
-          "description": "key specifies the cryptographic parameters for the certificate's key pair. Currently this is the only configurable parameter. When omitted in an overrides entry, the key configuration from defaults is used.",
-          "default": {},
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.KeyConfig"
         }
       }
     },
@@ -13631,45 +13548,31 @@
       }
     },
     "com.github.openshift.api.config.v1alpha1.CustomPKIPolicy": {
-      "description": "CustomPKIPolicy contains administrator-specified cryptographic configuration. Administrators must specify defaults for all certificates and may optionally override specific categories of certificates.",
+      "description": "CustomPKIPolicy contains administrator-specified cryptographic configuration, wrapping a PKIProfile. When set, at least one property must be specified.\n\nDeprecated: the wrapped fields were flattened into PKICertificatePolicy.",
       "type": "object",
       "required": [
         "defaults"
       ],
       "properties": {
         "clientCertificates": {
-          "description": "clientCertificates optionally overrides certificate parameters for client authentication certificates used to authenticate to servers. When set, these parameters take precedence over defaults for all client certificates. When omitted, the defaults are used for client certificates.",
+          "description": "clientCertificates optionally overrides certificate parameters for client authentication certificates used to authenticate to servers. When set, these parameters take precedence over defaults for all client certificates. When omitted, the defaults are used for client certificates. The key field within it is now marked required (previously enforced via minProperties: 1).\n\nDeprecated: use PKICertificatePolicy.ClientCertificates instead.",
           "default": {},
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.CertificateConfig"
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKICertificateConfig"
         },
         "defaults": {
-          "description": "defaults specifies the default certificate configuration that applies to all certificates unless overridden by a category override.",
+          "description": "defaults specifies the default certificate configuration that applies to all certificates unless overridden by a category override. This field is required so that every certificate has a well-defined configuration.\n\nDeprecated: use PKICertificatePolicy.Defaults instead.",
           "default": {},
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.DefaultCertificateConfig"
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKIDefaultCertificateConfig"
         },
         "servingCertificates": {
-          "description": "servingCertificates optionally overrides certificate parameters for TLS server certificates used to serve HTTPS endpoints. When set, these parameters take precedence over defaults for all serving certificates. When omitted, the defaults are used for serving certificates.",
+          "description": "servingCertificates optionally overrides certificate parameters for TLS server certificates used to serve HTTPS endpoints. When set, these parameters take precedence over defaults for all serving certificates. When omitted, the defaults are used for serving certificates. The key field within it is now marked required (previously enforced via minProperties: 1).\n\nDeprecated: use PKICertificatePolicy.ServerCertificates instead.",
           "default": {},
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.CertificateConfig"
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKICertificateConfig"
         },
         "signerCertificates": {
-          "description": "signerCertificates optionally overrides certificate parameters for certificate authority (CA) certificates that sign other certificates. When set, these parameters take precedence over defaults for all signer certificates. When omitted, the defaults are used for signer certificates.",
+          "description": "signerCertificates optionally overrides certificate parameters for certificate authority (CA) certificates that sign other certificates. When set, these parameters take precedence over defaults for all signer certificates. When omitted, the defaults are used for signer certificates. The key field within it is now marked required (previously enforced via minProperties: 1).\n\nDeprecated: use PKICertificatePolicy.CACertificates instead.",
           "default": {},
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.CertificateConfig"
-        }
-      }
-    },
-    "com.github.openshift.api.config.v1alpha1.DefaultCertificateConfig": {
-      "description": "DefaultCertificateConfig specifies the default certificate configuration parameters. All fields are required to ensure that defaults are fully specified for all certificates.",
-      "type": "object",
-      "required": [
-        "key"
-      ],
-      "properties": {
-        "key": {
-          "description": "key specifies the cryptographic parameters for the certificate's key pair. This field is required in defaults to ensure all certificates have a well-defined key configuration.",
-          "default": {},
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.KeyConfig"
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKICertificateConfig"
         }
       }
     },
@@ -13683,45 +13586,6 @@
         "targetLabel": {
           "description": "targetLabel is the label name whose value is compared to the concatenated source_labels; targets that match are dropped. Must be between 1 and 128 characters in length.",
           "type": "string"
-        }
-      }
-    },
-    "com.github.openshift.api.config.v1alpha1.ECDSAKeyConfig": {
-      "description": "ECDSAKeyConfig specifies parameters for ECDSA key generation.",
-      "type": "object",
-      "required": [
-        "curve"
-      ],
-      "properties": {
-        "curve": {
-          "description": "curve specifies the NIST elliptic curve for ECDSA keys. Valid values are \"P256\", \"P384\", and \"P521\".\n\nWhen set to P256, the NIST P-256 curve (also known as secp256r1) is used, providing 128-bit security.\n\nWhen set to P384, the NIST P-384 curve (also known as secp384r1) is used, providing 192-bit security.\n\nWhen set to P521, the NIST P-521 curve (also known as secp521r1) is used, providing 256-bit security.",
-          "type": "string"
-        }
-      }
-    },
-    "com.github.openshift.api.config.v1alpha1.EtcdBackupSpec": {
-      "description": "EtcdBackupSpec provides configuration for automated etcd backups to the cluster-etcd-operator",
-      "type": "object",
-      "properties": {
-        "pvcName": {
-          "description": "pvcName specifies the name of the PersistentVolumeClaim (PVC) which binds a PersistentVolume where the etcd backup files would be saved The PVC itself must always be created in the \"openshift-etcd\" namespace If the PVC is left unspecified \"\" then the platform will choose a reasonable default location to save the backup. In the future this would be backups saved across the control-plane master nodes.",
-          "type": "string",
-          "default": ""
-        },
-        "retentionPolicy": {
-          "description": "retentionPolicy defines the retention policy for retaining and deleting existing backups.",
-          "default": {},
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.RetentionPolicy"
-        },
-        "schedule": {
-          "description": "schedule defines the recurring backup schedule in Cron format every 2 hours: 0 */2 * * * every day at 3am: 0 3 * * * Empty string means no opinion and the platform is left to choose a reasonable default which is subject to change without notice. The current default is \"no backups\", but will change in the future.",
-          "type": "string",
-          "default": ""
-        },
-        "timeZone": {
-          "description": "The time zone name for the given schedule, see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones. If not specified, this will default to the time zone of the kube-controller-manager process. See https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#time-zones",
-          "type": "string",
-          "default": ""
         }
       }
     },
@@ -13852,38 +13716,6 @@
           "type": "string"
         }
       }
-    },
-    "com.github.openshift.api.config.v1alpha1.KeyConfig": {
-      "description": "KeyConfig specifies cryptographic parameters for key generation.",
-      "type": "object",
-      "required": [
-        "algorithm"
-      ],
-      "properties": {
-        "algorithm": {
-          "description": "algorithm specifies the key generation algorithm. Valid values are \"RSA\" and \"ECDSA\".\n\nWhen set to RSA, the rsa field must be specified and the generated key will be an RSA key with the configured key size.\n\nWhen set to ECDSA, the ecdsa field must be specified and the generated key will be an ECDSA key using the configured elliptic curve.",
-          "type": "string"
-        },
-        "ecdsa": {
-          "description": "ecdsa specifies ECDSA key parameters. Required when algorithm is ECDSA, and forbidden otherwise.",
-          "default": {},
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.ECDSAKeyConfig"
-        },
-        "rsa": {
-          "description": "rsa specifies RSA key parameters. Required when algorithm is RSA, and forbidden otherwise.",
-          "default": {},
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.RSAKeyConfig"
-        }
-      },
-      "x-kubernetes-unions": [
-        {
-          "discriminator": "algorithm",
-          "fields-to-discriminateBy": {
-            "ecdsa": "ECDSA",
-            "rsa": "RSA"
-          }
-        }
-      ]
     },
     "com.github.openshift.api.config.v1alpha1.KubeStateMetricsConfig": {
       "description": "KubeStateMetricsConfig provides configuration options for the kube-state-metrics agent that runs in the `openshift-monitoring` namespace. kube-state-metrics generates metrics about the state of Kubernetes objects such as Deployments, Nodes, and Pods.",
@@ -14719,20 +14551,34 @@
         }
       }
     },
+    "com.github.openshift.api.config.v1alpha1.PKICertificateConfig": {
+      "description": "PKICertificateConfig specifies configuration parameters for certificates.",
+      "type": "object",
+      "required": [
+        "key"
+      ],
+      "properties": {
+        "key": {
+          "description": "key specifies the cryptographic parameters for the certificate's key pair.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKIKeyConfig"
+        }
+      }
+    },
     "com.github.openshift.api.config.v1alpha1.PKICertificateManagement": {
-      "description": "PKICertificateManagement determines whether components use hardcoded defaults (Unmanaged), follow OpenShift best practices (Default), or use administrator-specified cryptographic parameters (Custom). This provides flexibility for organizations with specific compliance requirements or security policies while maintaining backwards compatibility for existing clusters.",
+      "description": "PKICertificateManagement is the former container for certificate configuration, a mode union determining whether components use hardcoded defaults (Unmanaged), follow OpenShift best practices (Default), or use administrator-specified cryptographic parameters (Custom).\n\nDeprecated: use PKICertificatePolicy instead.",
       "type": "object",
       "required": [
         "mode"
       ],
       "properties": {
         "custom": {
-          "description": "custom contains administrator-specified cryptographic configuration. Use the defaults and category override fields to specify certificate generation parameters. Required when mode is Custom, and forbidden otherwise.",
+          "description": "custom contains administrator-specified cryptographic configuration. Use the defaults and category override fields of the embedded PKIProfile to specify certificate generation parameters. Required when mode is Custom, and forbidden otherwise. When omitted, mode governs behavior on its own.\n\nDeprecated: use the fields of PKICertificatePolicy instead.",
           "default": {},
           "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.CustomPKIPolicy"
         },
         "mode": {
-          "description": "mode determines how PKI configuration is managed. Valid values are \"Unmanaged\", \"Default\", and \"Custom\".\n\nWhen set to Unmanaged, components use their existing hardcoded certificate generation behavior, exactly as if this feature did not exist. Each component generates certificates using whatever parameters it was using before this feature. While most components use RSA 2048, some may use different parameters. Use of this mode might prevent upgrading to the next major OpenShift release.\n\nWhen set to Default, OpenShift-recommended best practices for certificate generation are applied. The specific parameters may evolve across OpenShift releases to adopt improved cryptographic standards. In the initial release, this matches Unmanaged behavior for each component. In future releases, this may adopt ECDSA or larger RSA keys based on industry best practices. Recommended for most customers who want to benefit from security improvements automatically.\n\nWhen set to Custom, the certificate management parameters can be set explicitly. Use the custom field to specify certificate generation parameters.",
+          "description": "mode determines how PKI configuration is managed. Valid values are \"Unmanaged\", \"Default\", and \"Custom\".\n\nWhen set to Unmanaged, components use their existing hardcoded certificate generation behavior, exactly as if this feature did not exist. Each component generates certificates using whatever parameters it was using before this feature. While most components use RSA 2048, some may use different parameters. Use of this mode might prevent upgrading to the next major OpenShift release.\n\nWhen set to Default, OpenShift-recommended best practices for certificate generation are applied. The specific parameters may evolve across OpenShift releases to adopt improved cryptographic standards. In the initial release, this matches Unmanaged behavior for each component. In future releases, this may adopt ECDSA or larger RSA keys based on industry best practices. Recommended for most customers who want to benefit from security improvements automatically.\n\nWhen set to Custom, the certificate management parameters can be set explicitly. Use the custom field to specify certificate generation parameters.\n\nDeprecated: configure PKICertificatePolicy via the certificates field instead.",
           "type": "string"
         }
       },
@@ -14744,6 +14590,125 @@
           }
         }
       ]
+    },
+    "com.github.openshift.api.config.v1alpha1.PKICertificatePolicy": {
+      "description": "PKICertificatePolicy is the cluster's policy for internally-generated certificates: a required defaults, optional per-category overrides, and optional overrides for specific named certificates. The most-specific setting wins.",
+      "type": "object",
+      "required": [
+        "defaults"
+      ],
+      "properties": {
+        "caCertificates": {
+          "description": "caCertificates optionally overrides certificate parameters for certificate authority (CA) certificates that sign other certificates. When set, these parameters take precedence over defaults for all CA certificates. When omitted, defaults are used for CA certificates.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKICertificateConfig"
+        },
+        "clientCertificates": {
+          "description": "clientCertificates optionally overrides certificate parameters for client authentication certificates. When set, these parameters take precedence over defaults for all client certificates. When omitted, defaults are used for client certificates.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKICertificateConfig"
+        },
+        "defaults": {
+          "description": "defaults specifies the default certificate configuration applied to any certificate that has no more-specific (category or named) override. This field is required so that every certificate has a well-defined configuration.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKIDefaultCertificateConfig"
+        },
+        "namedCertificates": {
+          "description": "namedCertificates optionally overrides certificate parameters for specific certificates identified by their well-known name. These overrides have the highest precedence (named, then category, then defaults). Entries are keyed by name, so a given name may appear at most once. When omitted, no named overrides are applied. When present, the list must contain at least one entry. At most 512 named certificate overrides may be specified.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKINamedCertificateConfig"
+          },
+          "x-kubernetes-list-map-keys": [
+            "name"
+          ],
+          "x-kubernetes-list-type": "map"
+        },
+        "serverCertificates": {
+          "description": "serverCertificates optionally overrides certificate parameters for TLS server certificates. When set, these parameters take precedence over defaults for all server certificates. When omitted, defaults are used for server certificates.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKICertificateConfig"
+        }
+      }
+    },
+    "com.github.openshift.api.config.v1alpha1.PKIDefaultCertificateConfig": {
+      "description": "PKIDefaultCertificateConfig specifies the default certificate configuration parameters. All fields are required to ensure that defaults are fully specified for all certificates.",
+      "type": "object",
+      "required": [
+        "key"
+      ],
+      "properties": {
+        "key": {
+          "description": "key specifies the cryptographic parameters for the certificate's key pair. This field is required in defaults to ensure all certificates have a well-defined key configuration.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKIKeyConfig"
+        }
+      }
+    },
+    "com.github.openshift.api.config.v1alpha1.PKIECDSAKeyConfig": {
+      "description": "PKIECDSAKeyConfig specifies parameters for ECDSA key generation.",
+      "type": "object",
+      "required": [
+        "curve"
+      ],
+      "properties": {
+        "curve": {
+          "description": "curve specifies the NIST elliptic curve for ECDSA keys. Valid values are \"P256\", \"P384\", and \"P521\".\n\nWhen set to P256, the NIST P-256 curve (also known as secp256r1) is used, providing 128-bit security.\n\nWhen set to P384, the NIST P-384 curve (also known as secp384r1) is used, providing 192-bit security.\n\nWhen set to P521, the NIST P-521 curve (also known as secp521r1) is used, providing 256-bit security.",
+          "type": "string"
+        }
+      }
+    },
+    "com.github.openshift.api.config.v1alpha1.PKIKeyConfig": {
+      "description": "PKIKeyConfig specifies cryptographic parameters for key generation.",
+      "type": "object",
+      "required": [
+        "algorithm"
+      ],
+      "properties": {
+        "algorithm": {
+          "description": "algorithm specifies the key generation algorithm. Valid values are \"RSA\" and \"ECDSA\".\n\nWhen set to RSA, the rsa field must be specified and the generated key will be an RSA key with the configured key size.\n\nWhen set to ECDSA, the ecdsa field must be specified and the generated key will be an ECDSA key using the configured elliptic curve.",
+          "type": "string"
+        },
+        "ecdsa": {
+          "description": "ecdsa specifies ECDSA key parameters. Required when algorithm is ECDSA, and forbidden otherwise.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKIECDSAKeyConfig"
+        },
+        "rsa": {
+          "description": "rsa specifies RSA key parameters. Required when algorithm is RSA, and forbidden otherwise.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKIRSAKeyConfig"
+        }
+      },
+      "x-kubernetes-unions": [
+        {
+          "discriminator": "algorithm",
+          "fields-to-discriminateBy": {
+            "ecdsa": "ECDSA",
+            "rsa": "RSA"
+          }
+        }
+      ]
+    },
+    "com.github.openshift.api.config.v1alpha1.PKIKeyPolicy": {
+      "description": "PKIKeyPolicy configures keys generated outside of any certificate, by well-known name. When set, at least one named key must be specified; an empty object is rejected.",
+      "type": "object",
+      "required": [
+        "namedKeys"
+      ],
+      "properties": {
+        "namedKeys": {
+          "description": "namedKeys configures keys generated outside of any certificate, such as the bound service-account token signing key, identified by their well-known name. Entries are opt-in with no inherited default and are keyed by name, so a given name may appear at most once. This field is required so that a keys object is never empty. At most 16 named keys may be specified.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKINamedKeyConfig"
+          },
+          "x-kubernetes-list-map-keys": [
+            "name"
+          ],
+          "x-kubernetes-list-type": "map"
+        }
+      }
     },
     "com.github.openshift.api.config.v1alpha1.PKIList": {
       "description": "PKIList is a collection of PKI resources.\n\nCompatibility level 4: No compatibility is provided, the API can change at any point for any reason. These capabilities should not be used by applications needing long term support.",
@@ -14774,46 +14739,105 @@
         }
       }
     },
+    "com.github.openshift.api.config.v1alpha1.PKINamedCertificateConfig": {
+      "description": "PKINamedCertificateConfig overrides certificate parameters for a specific certificate identified by its well-known name.",
+      "type": "object",
+      "required": [
+        "name",
+        "key"
+      ],
+      "properties": {
+        "key": {
+          "description": "key specifies the cryptographic parameters for the certificate's key pair.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKIKeyConfig"
+        },
+        "name": {
+          "description": "name is the well-known override name of the targeted certificate. It is a DNS subdomain prefix, a \"/\", then a name made of alphanumerics, \"-\", \"_\" and \".\" (for example \"openshift.io/service-ca.service-serving-signer\"). The prefix is at most 253 characters and the name after the \"/\" at most 63, so the full name must be between 1 and 317 characters. The name is validated for format only; there is no registry of valid names, because certificates can be registered dynamically. Core-platform certificates use the bare \"openshift.io/\" prefix; names outside the core platform use an owner subdomain prefix (for example \"hypershift.openshift.io/\"). This field is required so that every named certificate override identifies the certificate it applies to.",
+          "type": "string"
+        }
+      }
+    },
+    "com.github.openshift.api.config.v1alpha1.PKINamedKeyConfig": {
+      "description": "PKINamedKeyConfig configures the cryptographic parameters for a single key generated outside of any certificate, identified by its well-known name.",
+      "type": "object",
+      "required": [
+        "name",
+        "key"
+      ],
+      "properties": {
+        "key": {
+          "description": "key specifies the cryptographic parameters for this key. It is required because keys configured here have no inherited default.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKIKeyConfig"
+        },
+        "name": {
+          "description": "name is the well-known name of the key. It is a DNS subdomain prefix, a \"/\", then a name made of alphanumerics, \"-\", \"_\" and \".\" (for example \"openshift.io/kube-apiserver.bound-service-account-token-signer\"). The prefix is at most 253 characters and the name after the \"/\" at most 63, so the full name must be between 1 and 317 characters. The name is validated for format only, using the same rules as a named certificate override. This field is required so that every named key entry identifies the key it configures.",
+          "type": "string"
+        }
+      }
+    },
     "com.github.openshift.api.config.v1alpha1.PKIProfile": {
-      "description": "PKIProfile defines the certificate generation parameters that OpenShift components use to create certificates. Category overrides take precedence over defaults.",
+      "description": "PKIProfile defines the certificate generation parameters that OpenShift components use to create certificates. Category overrides take precedence over defaults.\n\nDeprecated: use PKICertificatePolicy instead.",
       "type": "object",
       "required": [
         "defaults"
       ],
       "properties": {
         "clientCertificates": {
-          "description": "clientCertificates optionally overrides certificate parameters for client authentication certificates used to authenticate to servers. When set, these parameters take precedence over defaults for all client certificates. When omitted, the defaults are used for client certificates.",
+          "description": "clientCertificates optionally overrides certificate parameters for client authentication certificates used to authenticate to servers. When set, these parameters take precedence over defaults for all client certificates. When omitted, the defaults are used for client certificates. The key field within it is now marked required (previously enforced via minProperties: 1).\n\nDeprecated: use PKICertificatePolicy.ClientCertificates instead.",
           "default": {},
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.CertificateConfig"
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKICertificateConfig"
         },
         "defaults": {
-          "description": "defaults specifies the default certificate configuration that applies to all certificates unless overridden by a category override.",
+          "description": "defaults specifies the default certificate configuration that applies to all certificates unless overridden by a category override. This field is required so that every certificate has a well-defined configuration.\n\nDeprecated: use PKICertificatePolicy.Defaults instead.",
           "default": {},
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.DefaultCertificateConfig"
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKIDefaultCertificateConfig"
         },
         "servingCertificates": {
-          "description": "servingCertificates optionally overrides certificate parameters for TLS server certificates used to serve HTTPS endpoints. When set, these parameters take precedence over defaults for all serving certificates. When omitted, the defaults are used for serving certificates.",
+          "description": "servingCertificates optionally overrides certificate parameters for TLS server certificates used to serve HTTPS endpoints. When set, these parameters take precedence over defaults for all serving certificates. When omitted, the defaults are used for serving certificates. The key field within it is now marked required (previously enforced via minProperties: 1).\n\nDeprecated: use PKICertificatePolicy.ServerCertificates instead.",
           "default": {},
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.CertificateConfig"
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKICertificateConfig"
         },
         "signerCertificates": {
-          "description": "signerCertificates optionally overrides certificate parameters for certificate authority (CA) certificates that sign other certificates. When set, these parameters take precedence over defaults for all signer certificates. When omitted, the defaults are used for signer certificates.",
+          "description": "signerCertificates optionally overrides certificate parameters for certificate authority (CA) certificates that sign other certificates. When set, these parameters take precedence over defaults for all signer certificates. When omitted, the defaults are used for signer certificates. The key field within it is now marked required (previously enforced via minProperties: 1).\n\nDeprecated: use PKICertificatePolicy.CACertificates instead.",
           "default": {},
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.CertificateConfig"
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKICertificateConfig"
+        }
+      }
+    },
+    "com.github.openshift.api.config.v1alpha1.PKIRSAKeyConfig": {
+      "description": "PKIRSAKeyConfig specifies parameters for RSA key generation.",
+      "type": "object",
+      "required": [
+        "keySize"
+      ],
+      "properties": {
+        "keySize": {
+          "description": "keySize specifies the size of RSA keys in bits. Valid values are multiples of 1024 from 2048 to 4096.",
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
     "com.github.openshift.api.config.v1alpha1.PKISpec": {
-      "description": "PKISpec holds the specification for PKI configuration.",
+      "description": "PKISpec holds the specification for PKI configuration. Exactly one of certificates or certificateManagement must be set.",
       "type": "object",
-      "required": [
-        "certificateManagement"
-      ],
       "properties": {
         "certificateManagement": {
-          "description": "certificateManagement specifies how PKI configuration is managed for internally-generated certificates. This controls the certificate generation approach for all OpenShift components that create certificates internally, including certificate authorities, serving certificates, and client certificates.",
+          "description": "certificateManagement is the former shape of certificates, a mode union (Unmanaged/Default/Custom). It is retained only so that clients written against it keep compiling and so that objects using it keep roundtripping; it is mutually exclusive with certificates and exactly one of the two must be set. Note that key validation is tighter than it was when this field was current: RSA key sizes above 4096 bits, which were previously accepted, are now rejected.\n\nDeprecated: use certificates instead.",
           "default": {},
           "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKICertificateManagement"
+        },
+        "certificates": {
+          "description": "certificates specifies the cluster's certificate policy for internally-generated certificates, resolved most-specific-wins: a named certificate override, then a category override (CA, server, client), then the required defaults. This field is optional and mutually exclusive with the deprecated certificateManagement field; exactly one of the two must be set. This field names a configuration policy; it is unrelated to the X.509 certificate-policies extension.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKICertificatePolicy"
+        },
+        "keys": {
+          "description": "keys optionally configures keys generated outside of any certificate, such as the bound service-account token signing key. Entries are named and opt-in with no inherited default. When omitted, no keys are configured by this resource. When set, at least one named key must be specified; an empty object is rejected. Unlike certificates, keys have no resolution chain: a key is either configured here or it is not, and a component whose key is not configured decides for itself (an internal default, or an error if it has none).",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.PKIKeyPolicy"
         }
       }
     },
@@ -15092,20 +15116,6 @@
         }
       }
     },
-    "com.github.openshift.api.config.v1alpha1.RSAKeyConfig": {
-      "description": "RSAKeyConfig specifies parameters for RSA key generation.",
-      "type": "object",
-      "required": [
-        "keySize"
-      ],
-      "properties": {
-        "keySize": {
-          "description": "keySize specifies the size of RSA keys in bits. Valid values are multiples of 1024 from 2048 to 8192.",
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
     "com.github.openshift.api.config.v1alpha1.RelabelActionConfig": {
       "description": "RelabelActionConfig represents the action to perform and its configuration. Exactly one action-specific configuration must be specified based on the action type.",
       "type": "object",
@@ -15194,7 +15204,7 @@
           "type": "string"
         },
         "sourceLabels": {
-          "description": "sourceLabels specifies which label names to extract from each series for this relabeling rule. The values of these labels are joined together using the configured separator, and the resulting string is then matched against the regular expression. If a referenced label does not exist on a series, Prometheus substitutes an empty string. When omitted, the rule operates without extracting source labels (useful for actions like labelmap). Minimum of 1 and maximum of 10 source labels can be specified, each between 1 and 128 characters. Each entry must be unique. Label names beginning with \"__\" (two underscores) are reserved for internal Prometheus use and are not allowed. Label names SHOULD start with a letter (a-z, A-Z) or underscore (_), followed by zero or more letters, digits (0-9), or underscores for best compatibility. While Prometheus supports UTF-8 characters in label names (since v3.0.0), using the recommended character set ensures better compatibility with the wider ecosystem (tooling, third-party instrumentation, etc.).",
+          "description": "sourceLabels specifies which label names to extract from each series for this relabeling rule. The values of these labels are joined together using the configured separator, and the resulting string is then matched against the regular expression. If a referenced label does not exist on a series, Prometheus substitutes an empty string. When omitted, the rule operates without extracting source labels (useful for actions like labelmap). Minimum of 1 and maximum of 10 source labels can be specified, each between 1 and 128 characters. Each entry must be unique. Labels beginning with \"__\" (two underscores) are Prometheus internal/meta labels (e.g., __name__, __address__) and are valid in sourceLabels because relabeling reads from them before they are stripped. Using __name__ in sourceLabels is the standard way to filter metrics by name in writeRelabelConfigs. Label names SHOULD start with a letter (a-z, A-Z) or underscore (_), followed by zero or more letters, digits (0-9), or underscores for best compatibility. While Prometheus supports UTF-8 characters in label names (since v3.0.0), using the recommended character set ensures better compatibility with the wider ecosystem (tooling, third-party instrumentation, etc.).",
           "type": "array",
           "items": {
             "type": "string"
@@ -15308,7 +15318,7 @@
           "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.TLSConfig"
         },
         "url": {
-          "description": "url is the URL of the remote write endpoint. Must be a valid URL with http or https scheme and a non-empty hostname. Query parameters, fragments, and user information (e.g. user:password@host) are not allowed. Empty string is invalid. Must be between 1 and 2048 characters in length.",
+          "description": "url is the URL of the remote write endpoint. Must be a valid URL with http or https scheme and a non-empty hostname. Query parameters are allowed. Fragments and user information (e.g. user:password@host) are not allowed. Empty string is invalid. Must be between 1 and 2048 characters in length.",
           "type": "string"
         },
         "writeRelabelConfigs": {
@@ -15353,71 +15363,6 @@
         "size": {
           "description": "size is an optional field that specifies the maximum storage size that Prometheus can use for data blocks and the write-ahead log (WAL). Valid values are byte-size strings with an optional decimal prefix and a unit suffix B, KB, MB, GB, TB, EB, PB, or their binary equivalents KiB, MiB, GiB, TiB, EiB, PiB (for example, \"500MiB\", \"10GiB\"). The numeric value must be greater than zero. Must be at least 1 character and at most 32 characters. When set to \"0\", no size limit is enforced. This is the only supported form for disabling size-based retention; other zero-size representations such as \"0B\" or \"0MiB\" are rejected. When the limit is reached, Prometheus deletes oldest data first. When omitted, no size limit is enforced and Prometheus uses available PersistentVolume capacity.",
           "type": "string"
-        }
-      }
-    },
-    "com.github.openshift.api.config.v1alpha1.RetentionNumberConfig": {
-      "description": "RetentionNumberConfig specifies the configuration of the retention policy on the number of backups",
-      "type": "object",
-      "required": [
-        "maxNumberOfBackups"
-      ],
-      "properties": {
-        "maxNumberOfBackups": {
-          "description": "maxNumberOfBackups defines the maximum number of backups to retain. If the existing number of backups saved is equal to MaxNumberOfBackups then the oldest backup will be removed before a new backup is initiated.",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        }
-      }
-    },
-    "com.github.openshift.api.config.v1alpha1.RetentionPolicy": {
-      "description": "RetentionPolicy defines the retention policy for retaining and deleting existing backups. This struct is a discriminated union that allows users to select the type of retention policy from the supported types.",
-      "type": "object",
-      "required": [
-        "retentionType"
-      ],
-      "properties": {
-        "retentionNumber": {
-          "description": "retentionNumber configures the retention policy based on the number of backups",
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.RetentionNumberConfig"
-        },
-        "retentionSize": {
-          "description": "retentionSize configures the retention policy based on the size of backups",
-          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.RetentionSizeConfig"
-        },
-        "retentionType": {
-          "description": "retentionType sets the type of retention policy. Currently, the only valid policies are retention by number of backups (RetentionNumber), by the size of backups (RetentionSize). More policies or types may be added in the future. Empty string means no opinion and the platform is left to choose a reasonable default which is subject to change without notice. The current default is RetentionNumber with 15 backups kept.\n\nPossible enum values:\n - `\"RetentionNumber\"` sets the retention policy based on the number of backup files saved\n - `\"RetentionSize\"` sets the retention policy based on the total size of the backup files saved",
-          "type": "string",
-          "default": "",
-          "enum": [
-            "RetentionNumber",
-            "RetentionSize"
-          ]
-        }
-      },
-      "x-kubernetes-unions": [
-        {
-          "discriminator": "retentionType",
-          "fields-to-discriminateBy": {
-            "retentionNumber": "RetentionNumber",
-            "retentionSize": "RetentionSize"
-          }
-        }
-      ]
-    },
-    "com.github.openshift.api.config.v1alpha1.RetentionSizeConfig": {
-      "description": "RetentionSizeConfig specifies the configuration of the retention policy on the total size of backups",
-      "type": "object",
-      "required": [
-        "maxSizeOfBackupsGb"
-      ],
-      "properties": {
-        "maxSizeOfBackupsGb": {
-          "description": "maxSizeOfBackupsGb defines the total size in GB of backups to retain. If the current total size backups exceeds MaxSizeOfBackupsGb then the oldest backup will be removed before a new backup is initiated.",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
         }
       }
     },
@@ -17112,6 +17057,35 @@
         }
       }
     },
+    "com.github.openshift.api.etcd.v1.PacemakerClusterAlertAgentStatus": {
+      "description": "PacemakerClusterAlertAgentStatus represents the status of a pacemaker alert agent tracked on a node. Unlike a pacemaker resource, an alert agent is registered in the CIB's <alerts> section rather than its <resources> section: pacemaker does not start, stop, monitor, or move it. Its delivery chain (script, helper script, systemd unit, sudoers entry) is delivered to each node independently by MCO.",
+      "type": "object",
+      "required": [
+        "conditions",
+        "name"
+      ],
+      "properties": {
+        "conditions": {
+          "description": "conditions represent the observations of the alert agent's current state. Known condition types are: \"Healthy\", \"Configured\", \"Available\". The \"Healthy\" condition is an aggregate that tracks the overall health of the alert agent. The \"Configured\" condition tracks whether the alert agent is registered in the CIB as expected. The \"Available\" condition tracks whether the agent's full delivery chain is present on this node. The \"Healthy\" condition may be Unknown with reason \"Pending\" when health has not yet been determined. Each of these conditions is required, so the array must contain exactly 3 items. A condition with reason \"Pending\" must have status \"Unknown\".",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.Condition"
+          },
+          "x-kubernetes-list-map-keys": [
+            "type"
+          ],
+          "x-kubernetes-list-type": "map"
+        },
+        "name": {
+          "description": "name is required and identifies the alert agent. Valid values are \"TaintAlertAgent\" and \"UntaintAlertAgent\". The TaintAlertAgent taints a node after it is fenced. The UntaintAlertAgent removes a node's taint once it rejoins the cluster.\n\nPossible enum values:\n - `\"TaintAlertAgent\"` is the alert agent that taints a node after it is fenced.\n - `\"UntaintAlertAgent\"` is the alert agent that removes a node's taint once it rejoins the cluster.",
+          "type": "string",
+          "enum": [
+            "TaintAlertAgent",
+            "UntaintAlertAgent"
+          ]
+        }
+      }
+    },
     "com.github.openshift.api.etcd.v1.PacemakerClusterFencingAgentStatus": {
       "description": "PacemakerClusterFencingAgentStatus represents the status of a fencing agent that can fence a node. Fencing agents are STONITH (Shoot The Other Node In The Head) devices used to isolate failed nodes. Unlike regular pacemaker resources, fencing agents are mapped to their target node (the node they can fence), not the node where their monitoring operations are scheduled.",
       "type": "object",
@@ -17176,7 +17150,7 @@
       }
     },
     "com.github.openshift.api.etcd.v1.PacemakerClusterNodeStatus": {
-      "description": "PacemakerClusterNodeStatus represents the status of a single node in the pacemaker cluster including the node's conditions and the health of critical resources running on that node.",
+      "description": "PacemakerClusterNodeStatus represents the status of a single node in the pacemaker cluster including the node's conditions and the health of critical resources running on that node. When the TNFObservability feature gate is enabled, once a status collector reports alertAgents for a node, later updates may not remove it. The field remains optional to tolerate collector versions that predate alert-agent tracking.",
       "type": "object",
       "required": [
         "conditions",
@@ -17194,8 +17168,19 @@
           },
           "x-kubernetes-list-type": "atomic"
         },
+        "alertAgents": {
+          "description": "alertAgents contains the status of pacemaker alert agents tracked for this node. Unlike resources, an alert agent is not managed by pacemaker: it is a script registered in the CIB's <alerts> section, delivered to this node independently by MCO. Valid alert agent names are \"TaintAlertAgent\" and \"UntaintAlertAgent\". Names must be unique within this array. This field is optional. When omitted, alert agent status is not reported for this node. This field is available only when the TNFObservability feature gate is enabled. When present, the array must contain exactly 2 items: one TaintAlertAgent and one UntaintAlertAgent.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/com.github.openshift.api.etcd.v1.PacemakerClusterAlertAgentStatus"
+          },
+          "x-kubernetes-list-map-keys": [
+            "name"
+          ],
+          "x-kubernetes-list-type": "map"
+        },
         "conditions": {
-          "description": "conditions represent the observations of the node's current state. Known condition types are: \"Healthy\", \"Online\", \"InService\", \"Active\", \"Ready\", \"Clean\", \"Member\", \"FencingAvailable\", \"FencingHealthy\". The \"Healthy\" condition is an aggregate that tracks the overall health of the node. The \"Online\" condition tracks whether the node is online. The \"InService\" condition tracks whether the node is in service (not in maintenance mode). The \"Active\" condition tracks whether the node is active (not in standby mode). The \"Ready\" condition tracks whether the node is ready (not in a pending state). The \"Clean\" condition tracks whether the node is in a clean (status known) state. The \"Member\" condition tracks whether the node is a member of the cluster. The \"FencingAvailable\" condition tracks whether this node can be fenced by at least one healthy agent. The \"FencingHealthy\" condition tracks whether all fencing agents for this node are healthy. Each of these conditions is required, so the array must contain at least 9 items.",
+          "description": "conditions represent the observations of the node's current state. Known condition types are: \"Healthy\", \"Online\", \"InService\", \"Active\", \"Ready\", \"Clean\", \"Member\", \"FencingAvailable\", \"FencingHealthy\". The \"Healthy\" condition is an aggregate that tracks the overall health of the node. The \"Online\" condition tracks whether the node is online. The \"InService\" condition tracks whether the node is in service (not in maintenance mode). The \"Active\" condition tracks whether the node is active (not in standby mode). The \"Ready\" condition tracks whether the node is ready (not in a pending state). The \"Clean\" condition tracks whether the node is in a clean (status known) state. The \"Member\" condition tracks whether the node is a member of the cluster. The \"FencingAvailable\" condition tracks whether this node can be fenced by at least one healthy agent. The \"FencingHealthy\" condition tracks whether all fencing agents for this node are healthy. Each of these conditions is required, so the array must contain at least 9 items. An optional \"AlertAgentsHealthy\" condition (see NodeAlertAgentsHealthyConditionType) may also be reported when the TNFObservability feature gate is enabled; it is not one of the required 9 and its absence does not affect validation. When reported as Unknown with reason \"Pending\", \"AlertAgentsHealthy\" means the health of the tracked alert agents has not yet been determined.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.Condition"
@@ -17272,7 +17257,7 @@
       ],
       "properties": {
         "conditions": {
-          "description": "conditions represent the observations of the pacemaker cluster's current state. Known condition types are: \"Healthy\", \"InService\", \"NodeCountAsExpected\". The \"Healthy\" condition is an aggregate that tracks the overall health of the cluster. The \"InService\" condition tracks whether the cluster is in service (not in maintenance mode). The \"NodeCountAsExpected\" condition tracks whether the expected number of nodes are present. Each of these conditions is required, so the array must contain at least 3 items.",
+          "description": "conditions represent the observations of the pacemaker cluster's current state. Known condition types are: \"Healthy\", \"InService\", \"NodeCountAsExpected\", \"FencingEnabled\". The \"Healthy\" condition is an aggregate that tracks the overall health of the cluster. The \"InService\" condition tracks whether the cluster is in service (not in maintenance mode). The \"NodeCountAsExpected\" condition tracks whether the expected number of nodes are present. The \"FencingEnabled\" condition tracks whether STONITH (fencing) is enabled in the cluster. The \"Healthy\", \"InService\", and \"NodeCountAsExpected\" conditions are required, so the array must contain at least 3 items. The \"FencingEnabled\" condition is optional and is omitted when the status collector has not yet observed the stonith-enabled property, for example immediately after an upgrade from a version that does not report it. The \"FencingEnabled\" condition is only reported when the TNFObservability feature gate is enabled. When the gate is enabled and the condition is present, its reason must be one of \"FencingEnabled\", \"FencingDisabled\", or \"Pending\".",
           "type": "array",
           "items": {
             "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.Condition"
@@ -17507,7 +17492,7 @@
       ],
       "properties": {
         "conditions": {
-          "description": "conditions represent the observations of the pacemaker cluster's current state. Known condition types are: \"Healthy\", \"InService\", \"NodeCountAsExpected\". The \"Healthy\" condition is an aggregate that tracks the overall health of the cluster. The \"InService\" condition tracks whether the cluster is in service (not in maintenance mode). The \"NodeCountAsExpected\" condition tracks whether the expected number of nodes are present. Each of these conditions is required, so the array must contain at least 3 items.",
+          "description": "conditions represent the observations of the pacemaker cluster's current state. Known condition types are: \"Healthy\", \"InService\", \"NodeCountAsExpected\", \"FencingEnabled\". The \"Healthy\" condition is an aggregate that tracks the overall health of the cluster. The \"InService\" condition tracks whether the cluster is in service (not in maintenance mode). The \"NodeCountAsExpected\" condition tracks whether the expected number of nodes are present. The \"FencingEnabled\" condition tracks whether STONITH (fencing) is enabled in the cluster. The \"Healthy\", \"InService\", and \"NodeCountAsExpected\" conditions are required, so the array must contain at least 3 items. The \"FencingEnabled\" condition is optional and is omitted when the status collector has not yet observed the stonith-enabled property, for example immediately after an upgrade from a version that does not report it. The \"FencingEnabled\" condition is only reported when the TNFObservability feature gate is enabled. When the gate is enabled and the condition is present, its reason must be one of \"FencingEnabled\", \"FencingDisabled\", or \"Pending\".",
           "type": "array",
           "items": {
             "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.Condition"
@@ -17770,6 +17755,10 @@
           "type": "integer",
           "format": "int32",
           "default": 8
+        },
+        "openShiftReleaseVersion": {
+          "description": "openShiftReleaseVersion demonstrates how to validate an OpenShift release version using the isSemver CEL function. Valid values are semantic versions, which includes stable releases (e.g. 4.22.20), early candidates (e.g. 4.23.0-ec.1), release candidates (e.g. 4.22.0-rc.5), nightly builds (e.g. 4.20.0-0.nightly-2026-10-28-054721), ci builds (e.g. 4.21.0-0.ci-2026-10-28-124831), and assembly builds (e.g. 4.16.23-assembly.art12586). The validation performed on this field matches exactly the validation performed by the Cluster Version Operator's validating webhook on the desiredUpdate field. When empty, no release version is specified. The maximum length of 128 is arbitrary and should be adjusted upwards if it is ever found to be insufficient. The minimum length of 5 is the length of the shortest valid semantic version (0.0.0).",
+          "type": "string"
         },
         "optionalImmutableField": {
           "description": "optionalImmutableField is a field that is immutable once set. It is optional but may not be changed once set.",
@@ -19594,7 +19583,7 @@
       ],
       "properties": {
         "advisorURI": {
-          "description": "advisorURI is required field that provides the URL link to the Insights Advisor. The link must be a valid HTTPS URL and the maximum length is 2048 characters.",
+          "description": "advisorURI is a required field that provides the URL link to the Red Hat Lightspeed Advisor UI. The link must be a valid HTTPS URL and the maximum length is 2048 characters.",
           "type": "string"
         },
         "description": {
@@ -19930,7 +19919,7 @@
       ],
       "properties": {
         "advisorURI": {
-          "description": "advisorURI is required field that provides the URL link to the Insights Advisor. The link must be a valid HTTPS URL and the maximum length is 2048 characters.",
+          "description": "advisorURI is a required field that provides the URL link to the Red Hat Lightspeed Advisor UI. The link must be a valid HTTPS URL and the maximum length is 2048 characters.",
           "type": "string",
           "default": ""
         },
@@ -19940,7 +19929,7 @@
           "default": ""
         },
         "state": {
-          "description": "state determines what the current state of the health check is. Health check is enabled by default and can be disabled by the user in the Insights advisor user interface.",
+          "description": "state determines what the current state of the health check is. Health check is enabled by default and can be disabled by the user in the Red Hat Lightspeed Advisor UI.",
           "type": "string",
           "default": ""
         },
@@ -20302,7 +20291,7 @@
       ],
       "properties": {
         "advisorURI": {
-          "description": "advisorURI is required field that provides the URL link to the Insights Advisor. The link must be a valid HTTPS URL and the maximum length is 2048 characters.",
+          "description": "advisorURI is a required field that provides the URL link to the Red Hat Lightspeed Advisor UI. The link must be a valid HTTPS URL and the maximum length is 2048 characters.",
           "type": "string",
           "default": ""
         },
@@ -33455,7 +33444,7 @@
       ],
       "properties": {
         "advisorURI": {
-          "description": "advisorURI provides the URL link to the Insights Advisor.",
+          "description": "advisorURI provides the URL link to the Red Hat Lightspeed Advisor UI.",
           "type": "string",
           "default": ""
         },
@@ -33465,7 +33454,7 @@
           "default": ""
         },
         "state": {
-          "description": "state determines what the current state of the health check is. Health check is enabled by default and can be disabled by the user in the Insights advisor user interface.",
+          "description": "state determines what the current state of the health check is. Health check is enabled by default and can be disabled by the user in the Red Hat Lightspeed Advisor UI.",
           "type": "string",
           "default": ""
         },
@@ -34499,8 +34488,7 @@
         "nodeName",
         "keyID",
         "status",
-        "lastCheckedTime",
-        "remoteKeyID"
+        "lastCheckedTime"
       ],
       "properties": {
         "detail": {
@@ -34520,11 +34508,11 @@
           "type": "string"
         },
         "remoteKeyID": {
-          "description": "remoteKeyID refers to the remote key identifier from KMS v2 StatusResponse.key_id. This is not a cryptographic key, but a unique representation of the KEK. The value must be between 1 and 1024 characters.",
+          "description": "remoteKeyID refers to the remote key identifier from KMS v2 StatusResponse.key_id. This is not a cryptographic key, but a unique representation of the KEK. When omitted, no remote key identifier is available. This is expected when status is Unhealthy or Error, for example when the plugin reports that it is not healthy or could not be reached. When status is Healthy, remoteKeyID is required. When set, the value must be between 1 and 1024 characters.",
           "type": "string"
         },
         "status": {
-          "description": "status contains a health indicator for the respective KMS plugin The field can have three states: healthy, unhealthy, error. With error and unhealthy containing additional information in Detail.",
+          "description": "status contains a health indicator for the respective KMS plugin. status is required and must be one of Healthy, Unhealthy or Error. When set to Healthy, the plugin responded successfully to the KMS v2 Status call and remoteKeyID is set. When set to Unhealthy, the plugin responded but reported that it is not healthy. When set to Error, the Status call failed or returned no response, for example because the plugin was unreachable. Unhealthy and Error may include additional information in detail.",
           "type": "string"
         }
       }
@@ -38386,26 +38374,6 @@
         }
       }
     },
-    "com.github.openshift.api.operator.v1alpha1.BackupJobReference": {
-      "description": "BackupJobReference holds a reference to the batch/v1 Job created to run the etcd backup",
-      "type": "object",
-      "required": [
-        "namespace",
-        "name"
-      ],
-      "properties": {
-        "name": {
-          "description": "name is the name of the Job. Required",
-          "type": "string",
-          "default": ""
-        },
-        "namespace": {
-          "description": "namespace is the namespace of the Job. this is always expected to be \"openshift-etcd\" since the user provided PVC is also required to be in \"openshift-etcd\" Required",
-          "type": "string",
-          "default": ""
-        }
-      }
-    },
     "com.github.openshift.api.operator.v1alpha1.ClusterAPI": {
       "description": "ClusterAPI provides configuration for the capi-operator.\n\nCompatibility level 4: No compatibility is provided, the API can change at any point for any reason. These capabilities should not be used by applications needing long term support.",
       "type": "object",
@@ -38766,9 +38734,10 @@
       }
     },
     "com.github.openshift.api.operator.v1alpha1.EtcdBackup": {
-      "description": "# EtcdBackup provides configuration options and status for a one-time backup attempt of the etcd cluster\n\nCompatibility level 4: No compatibility is provided, the API can change at any point for any reason. These capabilities should not be used by applications needing long term support.",
+      "description": "# EtcdBackup provides configuration options and status for a one-time backup attempt of the etcd cluster. # When an EtcdBackup is deleted the files created by it will be deleted as well, as long as the storage backend is still accessible.\n\nCompatibility level 4: No compatibility is provided, the API can change at any point for any reason. These capabilities should not be used by applications needing long term support.",
       "type": "object",
       "required": [
+        "metadata",
         "spec"
       ],
       "properties": {
@@ -38781,6 +38750,7 @@
           "type": "string"
         },
         "metadata": {
+          "description": "metadata is the standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata",
           "default": {},
           "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta"
         },
@@ -38793,6 +38763,28 @@
           "description": "status holds observed values from the cluster. They may not be overridden.",
           "default": {},
           "$ref": "#/definitions/com.github.openshift.api.operator.v1alpha1.EtcdBackupStatus"
+        }
+      }
+    },
+    "com.github.openshift.api.operator.v1alpha1.EtcdBackupFile": {
+      "type": "object",
+      "required": [
+        "assetType",
+        "path"
+      ],
+      "properties": {
+        "assetType": {
+          "description": "assetType specifies the type of the backup file. If set to Snapshot, the file is an etcd database snapshot. If set to StaticKubeResources, the file is a bundle of static pod manifests for the control plane. If etcd is encrypted, this will include the encryption keys.",
+          "type": "string"
+        },
+        "path": {
+          "description": "path to the backup file on the storage backend. Must be an absolute filepath between 1 and 4096 characters containing only alphanumeric characters, '/', '.', '_', or '-', starting with a '/'. This field is required.",
+          "type": "string"
+        },
+        "sizeBytes": {
+          "description": "sizeBytes is the size of the backup file on the storage backend in bytes. If omitted, then the file specified by path is an empty file. When specified, must be between 1 and 1000000000000 (1 TB). This field is optional.",
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -38824,25 +38816,182 @@
         }
       }
     },
-    "com.github.openshift.api.operator.v1alpha1.EtcdBackupSpec": {
+    "com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicy": {
+      "description": "# EtcdBackupPolicy sets an automated schedule for taking backups of the etcd cluster\n\nCompatibility level 4: No compatibility is provided, the API can change at any point for any reason. These capabilities should not be used by applications needing long term support.",
       "type": "object",
+      "required": [
+        "metadata",
+        "spec"
+      ],
       "properties": {
-        "pvcName": {
-          "description": "pvcName specifies the name of the PersistentVolumeClaim (PVC) which binds a PersistentVolume where the etcd backup file would be saved The PVC itself must always be created in the \"openshift-etcd\" namespace If the PVC is left unspecified \"\" then the platform will choose a reasonable default location to save the backup. In the future this would be backups saved across the control-plane master nodes.",
-          "type": "string",
-          "default": ""
+        "apiVersion": {
+          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+          "type": "string"
+        },
+        "kind": {
+          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+          "type": "string"
+        },
+        "metadata": {
+          "description": "metadata is the standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata",
+          "default": {},
+          "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta"
+        },
+        "spec": {
+          "description": "spec holds user settable values for configuration",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicySpec"
+        },
+        "status": {
+          "description": "status holds observed values from the cluster. They may not be overridden.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicyStatus"
         }
       }
     },
-    "com.github.openshift.api.operator.v1alpha1.EtcdBackupStatus": {
+    "com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicyList": {
+      "description": "EtcdBackupPolicyList is a collection of items\n\nCompatibility level 4: No compatibility is provided, the API can change at any point for any reason. These capabilities should not be used by applications needing long term support.",
+      "type": "object",
+      "required": [
+        "metadata",
+        "items"
+      ],
+      "properties": {
+        "apiVersion": {
+          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicy"
+          }
+        },
+        "kind": {
+          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+          "type": "string"
+        },
+        "metadata": {
+          "default": {},
+          "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ListMeta"
+        }
+      }
+    },
+    "com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicyRetentionQuantity": {
+      "type": "object",
+      "required": [
+        "maxQuantity"
+      ],
+      "properties": {
+        "maxQuantity": {
+          "description": "maxQuantity enforces the deletion of completed backups that exceed the total count. The total count of completed backups may temporarily exceed the limit when new backups are completed. Older backups are not deleted until a new one has succeeded. Must be between 1 and 1000. This field is required.",
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicyRetentionRule": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "quantity": {
+          "description": "quantity enforces the deletion of EtcdBackups belonging to the EtcdBackupPolicy based on total count. This field is required when the rule type is \"Quantity\", and forbidden otherwise.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicyRetentionQuantity"
+        },
+        "size": {
+          "description": "size enforces the deletion of EtcdBackups belonging to the EtcdBackupPolicy based on total backup file size. At least one backup will always be retained, even if it exceeds the size limit. This field is required when the rule type is \"Size\", and forbidden otherwise.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicyRetentionSize"
+        },
+        "type": {
+          "description": "type defined which rule field is set Allowed values are Quantity and Size. When set to Quantity, this rule deletes completed EtcdBackups based on the total count. When set to Size, this rule deletes completed EtcdBackups based on the total aggregate size of backup files. This field is required.",
+          "type": "string"
+        }
+      },
+      "x-kubernetes-unions": [
+        {
+          "discriminator": "type",
+          "fields-to-discriminateBy": {
+            "quantity": "Quantity",
+            "size": "Size"
+          }
+        }
+      ]
+    },
+    "com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicyRetentionSize": {
+      "type": "object",
+      "required": [
+        "maxTotalSizeGiB"
+      ],
+      "properties": {
+        "maxTotalSizeGiB": {
+          "description": "maxTotalSizeGiB enforces the deletion of completed backups by the total size of backups on the storage backend (in GiB). This is a soft threshold. The total size of backups may temporarily exceed the limit when new backups are completed. Older backups are not deleted until a new one has succeeded. If the newest backup exceeds the limit on its own, it will be retained with all older backups being pruned to ensure at least one valid backup exists. Must be between 1 and 10240 (10 TiB). This field is required.",
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicySpec": {
+      "type": "object",
+      "required": [
+        "schedule",
+        "storage"
+      ],
+      "properties": {
+        "assets": {
+          "description": "assets specifies the type of files to be backed up. If Snapshot is present, the etcd database will be snapshotted and saved to the storage backend. If StaticKubeResources is present, static pod manifests for the control plane will be bundled and saved to the storage backend. If etcd is encrypted, this will include the encryption keys. This field is copied to EtcdBackups created by this policy. When specified, must contain between 1 and 2 entries, with at most 1 of each type. When omitted, all assets types will be backed up. This field is optional.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-kubernetes-list-type": "set"
+        },
+        "failedBackupsHistoryLimit": {
+          "description": "failedBackupsHistoryLimit defined the number of failed etcdbackups to retain. Failed backups are deleted from the oldest first. Must be non-negative integer. If set to to 0, then failed backups will be deleted immediately. If unset, defaults to 1. Must be a positive integer no greater than 100. This field is optional.",
+          "type": "integer",
+          "format": "int32"
+        },
+        "nodeSelector": {
+          "description": "nodeSelector specifies which control plane nodes to select from for running backup jobs. The default node-role.kubernetes.io/control-plane label will always be added on top of any labels set on nodeSelector. If no nodes are matched, then no EtcdBackups will be created. For Local storage type, this may be used to target a specific node to take and store the backup. If distribution is AllNodes, then backups are taken on all selected nodes. If distribution is SingleNode, then backups will round robin selected nodes in lexicographical order starting from the last created backup for the policy. For PVC storage type, this may be used to control where the backup is taken from. If multiple nodes are selected, the scheduler is responsible for placing the backup job based on volume topology and any other scheduling constraints. EtcdBackup nodeSelector is derived from this field. When specified, must contain between 1 and 10 entries. This field is optional.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "retentionRules": {
+          "description": "retentionRules defines the policy for retaining and deleting completed backups. Completed backups are deleted from the oldest first until all rules are satisfied. If no rules are specified then backups created by this policy will not be automatically deleted. When an EtcdBackup is deleted the files created by it will be deleted as well, as long as the storage backend is still accessible. For Local storage with distribution AllNodes, retention is calculated for EtcdBackups grouped by Node (e.g. MaxQuantity 2 results in 2 backups per node, MaxTotalSizeGiB 5 results in 5GiB of backups per node). In all other cases retention is calculated across all EtcdBackups belonging to the policy. When specified, must contain between 1 and 2 entries. Must not have more than 1 entry of each rule type. This field is optional.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicyRetentionRule"
+          },
+          "x-kubernetes-list-map-keys": [
+            "type"
+          ],
+          "x-kubernetes-list-type": "map"
+        },
+        "schedule": {
+          "description": "schedule sets the backup schedule in Cron format, see https://en.wikipedia.org/wiki/Cron. The value must be one of the following forms: a predefined macro \"@yearly\", \"@annually\", \"@monthly\", \"@weekly\", \"@daily\" or \"@hourly\"; an \"@every <duration>\" expression where duration is a sequence of decimal numbers each with a unit of \"s\", \"m\" or \"h\" (for example \"@every 2h\" or \"@every 1h30m\"); or a standard cron expression of five space separated fields (minute, hour, day-of-month, month and day-of-week), where each field may only contain digits, the names used for months and days of the week, and the cron special characters \"*\", \"/\", \"-\" and \",\". This validation only checks the overall shape of the value; the individual field values are validated when the schedule is parsed by the controller, which reports parsing failures via the schedule's status condition. Must be between 1 and 1024 characters long. This field is required.",
+          "type": "string"
+        },
+        "storage": {
+          "description": "storage specifies the location where etcd backup files will be saved. EtcdBackup storage is derived from this field. In rare cases, where storage type is changed from PVC to Local with AllNodes distribution on an existing policy, old backups on the PVC may need to be manually pruned. Make sure to check that new valid backups exist before deleting old ones. This field is required.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicyStorage"
+        },
+        "timeZone": {
+          "description": "timeZone is an IANA time zone database name used to interpret the schedule, see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones. The accepted values are the same as the timeZone field of a CronJob. If not specified, this will default to the time zone of the cluster. Must be between 1 and 64 characters long. This field is optional.",
+          "type": "string"
+        }
+      }
+    },
+    "com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicyStatus": {
       "type": "object",
       "properties": {
-        "backupJob": {
-          "description": "backupJob is the reference to the Job that executes the backup. Optional",
-          "$ref": "#/definitions/com.github.openshift.api.operator.v1alpha1.BackupJobReference"
-        },
         "conditions": {
-          "description": "conditions provide details on the status of the etcd backup job.",
+          "description": "conditions provide details on the status of the etcd backup policy. Supported conditions include Scheduled. If Scheduled is true, scheduling the policy succeeded. If Scheduled is false, an error occurred while attempting to schedule the policy. The condition reason and message will provide addition details.\n\nWhen specified, must contain between 1 and 10 entries, with no more than 1 of each type. This field is optional.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.Condition"
@@ -38851,6 +39000,185 @@
             "type"
           ],
           "x-kubernetes-list-type": "map"
+        }
+      }
+    },
+    "com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicyStorage": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "local": {
+          "description": "local specifies a host path directory on the control plane node where the etcd backup file will be saved. This field is optional when storage type is \"Local\", and forbidden otherwise.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicyStorageLocal"
+        },
+        "pvc": {
+          "description": "pvc specifies the PersistentVolumeClaim (PVC) which binds a PersistentVolume where the etcd backup file will be saved. The PVC must always be created in the \"openshift-etcd\" namespace. This field is required when the storage type is \"PVC\", and forbidden otherwise.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicyStoragePvc"
+        },
+        "type": {
+          "description": "type of storage backend to use for storing the etcd backup. Allowed values are Local and PVC. When set to Local, the backup will be saved to a host path directory on the control plane node it was taken on. When set to PVC, the backup will be saved to a volume bound by a PersistentVolumeClaim. This field is required.",
+          "type": "string"
+        }
+      },
+      "x-kubernetes-unions": [
+        {
+          "discriminator": "type",
+          "fields-to-discriminateBy": {
+            "local": "Local",
+            "pvc": "PVC"
+          }
+        }
+      ]
+    },
+    "com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicyStorageLocal": {
+      "type": "object",
+      "properties": {
+        "distribution": {
+          "description": "distribution controls whether or not scheduled local backups are only taken on a single node or fan out to all control plane nodes. Allowed values are SingleNode and AllNodes When set to SingleNode, a single EtcdBackup will be created at each schedule execution on one of the selected control plane nodes. If multiple nodes are matched by nodeSelector, then backups round robin the nodes in lexicographical order. When set to AllNodes, EtcdBackups will be created for all selected control plane nodes at each schedule execution. Retention rules will be applied to EtcdBackups grouped by Node (e.g. MaxQuantity 2 results in 2 backups per node, MaxTotalSizeGiB 5 results in 5GiB of backups per node). If omitted, defaults to SingleNode. This field is optional.",
+          "type": "string"
+        },
+        "hostPath": {
+          "description": "hostPath is a local directory on the control plane node where the etcd backup file will be saved. hostPath must be an absolute filepath between 1 and 2048 characters containing only alphanumeric characters, '/', '.', '_', or '-', starting with a '/'. When omitted, hostPath defaults to \"/etc/kubernetes/cluster-backup\". This field is optional.",
+          "type": "string"
+        }
+      }
+    },
+    "com.github.openshift.api.operator.v1alpha1.EtcdBackupPolicyStoragePvc": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "name is a reference to a PVC in the \"openshift-etcd\" namespace where the etcd backup file will be saved. name must be between 1 and 253 characters and conform to RFC 1123 subdomain format: lowercase alphanumeric characters, '-' or '.', starting and ending with alphanumeric characters. This field is required.",
+          "type": "string"
+        },
+        "path": {
+          "description": "path is a directory on the volume where the etcd backup file will be saved. When present, path must be an absolute filepath between 1 and 2048 characters containing only alphanumeric characters, '/', '.', '_', or '-', starting with a '/'. This field is optional.",
+          "type": "string"
+        }
+      }
+    },
+    "com.github.openshift.api.operator.v1alpha1.EtcdBackupSpec": {
+      "type": "object",
+      "required": [
+        "storage"
+      ],
+      "properties": {
+        "assets": {
+          "description": "assets specifies the type of files to be backed up. If Snapshot is present, the etcd database will be snapshotted and saved to the storage backend. If StaticKubeResources is present, static pod manifests for the control plane will be bundled and saved to the storage backend. If etcd is encrypted, this will include the encryption keys. When specified, must contain between 1 and 2 entries, with at most 1 of each type. When omitted, all assets types will be backed up. This field is optional.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-kubernetes-list-type": "set"
+        },
+        "nodeSelector": {
+          "description": "nodeSelector specifies which control plane nodes to select from for running the backup job. Only one backup job is run per EtcdBackup. The default node-role.kubernetes.io/control-plane label will always be added on top of any labels set on nodeSelector. If no nodes are matched, then the backup will be marked failed. For Local storage type, this may be used to target a specific node to take and store the backup. For PVC storage type, this may be used to control where the backup is taken from. If multiple nodes are selected, the scheduler is responsible for placing the backup job based on volume topology and any other scheduling constraints. When specified, must contain between 1 and 10 entries. This field is optional.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "storage": {
+          "description": "storage specifies the location where etcd backup files will be saved. This field is required.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.operator.v1alpha1.EtcdBackupStorage"
+        }
+      }
+    },
+    "com.github.openshift.api.operator.v1alpha1.EtcdBackupStatus": {
+      "type": "object",
+      "properties": {
+        "conditions": {
+          "description": "conditions provide details on the status of the etcd backup job. Supported conditions include Running, Completed, and Failed. If Running is true, the backup job is currently active. If Completed is true, the backup job succeeded and has saved backup files to its storage location. If Failed is true, the backup job failed and did not create valid backup files.\n\nWhen specified, must contain between 1 and 15 entries, with no more than 1 of each type. This field is optional.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.Condition"
+          },
+          "x-kubernetes-list-map-keys": [
+            "type"
+          ],
+          "x-kubernetes-list-type": "map"
+        },
+        "files": {
+          "description": "files tracks the path and size of files generated by the etcd backup. Includes both etcd snapshots and static manifests. When specified, must contain between 1 and 10 entries. This field is optional.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/com.github.openshift.api.operator.v1alpha1.EtcdBackupFile"
+          },
+          "x-kubernetes-list-map-keys": [
+            "path"
+          ],
+          "x-kubernetes-list-type": "map"
+        },
+        "jobName": {
+          "description": "jobName is a reference to the Job created for the backup. It always runs in the openshift-etcd namespace. Must be between 1 and 253 characters and conform to RFC 1123 subdomain format: lowercase alphanumeric characters, '-' or '.', starting and ending with alphanumeric characters. This field is optional.",
+          "type": "string"
+        },
+        "nodeName": {
+          "description": "nodeName is used for Local EtcdBackups to bind the control plane node where the snapshot will be taken. It is set by the cluster-etcd-operator before the Local backup runs to ensure the file location is known for garbage collection. Must be between 1 and 253 characters and conform to RFC 1123 subdomain format: lowercase alphanumeric characters, '-' or '.', starting and ending with alphanumeric characters. This field is optional.",
+          "type": "string"
+        }
+      }
+    },
+    "com.github.openshift.api.operator.v1alpha1.EtcdBackupStorage": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "local": {
+          "description": "local specifies a host path directory on the control plane node where the etcd backup file will be saved. This field is optional when storage type is \"Local\", and forbidden otherwise.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.operator.v1alpha1.EtcdBackupStorageLocal"
+        },
+        "pvc": {
+          "description": "pvc specifies the PersistentVolumeClaim (PVC) which binds a PersistentVolume where the etcd backup file will be saved. The PVC must always be created in the \"openshift-etcd\" namespace. This field is required when the storage type is \"PVC\", and forbidden otherwise.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.operator.v1alpha1.EtcdBackupStoragePvc"
+        },
+        "type": {
+          "description": "type of storage backend to use for storing the etcd backup. Allowed values are Local and PVC. When set to Local, the backup will be saved to a host path directory on the control plane node it was taken on. When set to PVC, the backup will be saved to a volume bound by a PersistentVolumeClaim. This field is required.",
+          "type": "string"
+        }
+      },
+      "x-kubernetes-unions": [
+        {
+          "discriminator": "type",
+          "fields-to-discriminateBy": {
+            "local": "Local",
+            "pvc": "PVC"
+          }
+        }
+      ]
+    },
+    "com.github.openshift.api.operator.v1alpha1.EtcdBackupStorageLocal": {
+      "type": "object",
+      "properties": {
+        "hostPath": {
+          "description": "hostPath is a local directory on the control plane node where the etcd backup file will be saved. hostPath must be an absolute filepath between 1 and 2048 characters containing only alphanumeric characters, '/', '.', '_', or '-', starting with a '/'. When omitted, hostPath defaults to \"/etc/kubernetes/cluster-backup\". This field is optional.",
+          "type": "string"
+        }
+      }
+    },
+    "com.github.openshift.api.operator.v1alpha1.EtcdBackupStoragePvc": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "name is a reference to a PVC in the \"openshift-etcd\" namespace where the etcd backup file will be saved. name must be between 1 and 253 characters and conform to RFC 1123 subdomain format: lowercase alphanumeric characters, '-' or '.', starting and ending with alphanumeric characters. This field is required.",
+          "type": "string"
+        },
+        "path": {
+          "description": "path is a directory on the volume where the etcd backup file will be saved. When present, path must be an absolute filepath between 1 and 2048 characters containing only alphanumeric characters, '/', '.', '_', or '-', starting with a '/'. This field is optional.",
+          "type": "string"
         }
       }
     },
