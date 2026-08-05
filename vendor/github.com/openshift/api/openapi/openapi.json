@@ -4489,7 +4489,7 @@
           "$ref": "#/definitions/com.github.openshift.api.config.v1.CloudLoadBalancerConfig"
         },
         "ipFamily": {
-          "description": "ipFamily specifies the IP protocol family that should be used for AWS network resources. This controls whether AWS resources are created with IPv4-only, or dual-stack networking with IPv4 or IPv6 as the primary protocol family.",
+          "description": "ipFamily specifies the IP protocol family that should be used for AWS network resources. This controls whether AWS resources are created with IPv4-only, or dual-stack networking with IPv4 or IPv6 as the primary protocol family.\n\nValid values are: * \"IPv4\" (default): Cloud platform resources use IPv4 addressing only. * \"DualStackIPv6Primary\": Cloud platform resources use dual-stack networking with IPv6 as the primary protocol family. * \"DualStackIPv4Primary\": Cloud platform resources use dual-stack networking with IPv4 as the primary protocol family.\n\nWhen omitted, this field defaults to \"IPv4\".\n\nThis field is immutable and cannot be changed once set.",
           "type": "string",
           "default": "IPv4"
         },
@@ -7216,6 +7216,10 @@
             "key"
           ],
           "x-kubernetes-list-type": "map"
+        },
+        "universeDomain": {
+          "description": "universeDomain is the GCP universe domain for the cluster, detected from the installer credentials. Components with their own GCP credentials should read the universe domain from those credentials, as they are the authoritative source. This field is provided for components that do not have GCP credentials and for general observability.\n\nWhen omitted, standard public GCP (googleapis.com) is assumed.\n\nuniverseDomain is an optional field that, when specified, must be non-empty and at most 253 characters. It must be a valid DNS subdomain: containing only lowercase alphanumeric characters, '-' or '.', and starting and ending with an alphanumeric character.",
+          "type": "string"
         }
       }
     },
@@ -13748,6 +13752,11 @@
           "default": {},
           "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.NodeExporterCollectorCpufreqConfig"
         },
+        "deviceMapperMultipath": {
+          "description": "deviceMapperMultipath configures the dmmultipath collector, which collects statistics about DM-Multipath devices. deviceMapperMultipath is optional. When omitted, this means no opinion and the platform is left to choose a reasonable default, which is subject to change over time. The current default is enabled.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.NodeExporterCollectorDeviceMapperMultipathConfig"
+        },
         "ethtool": {
           "description": "ethtool configures the ethtool collector, which collects ethernet device statistics. ethtool is optional. When omitted, this means no opinion and the platform is left to choose a reasonable default, which is subject to change over time. The current default is disabled. Enable when you need NIC driver-level ethtool metrics beyond generic netdev counters.",
           "default": {},
@@ -13792,6 +13801,11 @@
           "description": "tcpStat configures the tcpstat collector, which collects TCP connection statistics. tcpStat is optional. When omitted, this means no opinion and the platform is left to choose a reasonable default, which is subject to change over time. The current default is disabled. Enable when debugging TCP connection behavior or capacity at the node level.",
           "default": {},
           "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.NodeExporterCollectorTcpStatConfig"
+        },
+        "zoneinfo": {
+          "description": "zoneinfo configures the zoneinfo collector, which exposes per-zone memory page counts, watermarks, and protection thresholds from /proc/zoneinfo. zoneinfo is optional. When omitted, this means no opinion and the platform is left to choose a reasonable default, which is subject to change over time. The current default is to not collect zoneinfo metrics. Enable when you need visibility into kernel memory zone allocation and pressure.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.config.v1alpha1.NodeExporterCollectorZoneinfoConfig"
         }
       }
     },
@@ -13804,6 +13818,23 @@
       "properties": {
         "collectionPolicy": {
           "description": "collectionPolicy declares whether the cpufreq collector collects metrics. This field is required. Valid values are \"Collect\" and \"DoNotCollect\". When set to \"Collect\", the cpufreq collector is active and CPU frequency statistics are collected. When set to \"DoNotCollect\", the cpufreq collector is inactive.\n\nPossible enum values:\n - `\"Collect\"` means the collector is active and will produce metrics.\n - `\"DoNotCollect\"` means the collector is inactive and will not produce metrics.",
+          "type": "string",
+          "enum": [
+            "Collect",
+            "DoNotCollect"
+          ]
+        }
+      }
+    },
+    "com.github.openshift.api.config.v1alpha1.NodeExporterCollectorDeviceMapperMultipathConfig": {
+      "description": "NodeExporterCollectorDeviceMapperMultipathConfig provides configuration for the dmmultipath collector of the node-exporter agent. The dmmultipath collector collects statistics about DM-Multipath devices. It is enabled by default.",
+      "type": "object",
+      "required": [
+        "collectionPolicy"
+      ],
+      "properties": {
+        "collectionPolicy": {
+          "description": "collectionPolicy declares whether the dmmultipath collector collects metrics. This field is required. Valid values are \"Collect\" and \"DoNotCollect\". When set to \"Collect\", the dmmultipath collector is active and DM-Multipath device statistics are collected. When set to \"DoNotCollect\", the dmmultipath collector is inactive and the corresponding metrics become unavailable.\n\nPossible enum values:\n - `\"Collect\"` means the collector is active and will produce metrics.\n - `\"DoNotCollect\"` means the collector is inactive and will not produce metrics.",
           "type": "string",
           "enum": [
             "Collect",
@@ -14012,6 +14043,23 @@
       "properties": {
         "collectionPolicy": {
           "description": "collectionPolicy declares whether the tcpstat collector collects metrics. This field is required. Valid values are \"Collect\" and \"DoNotCollect\". When set to \"Collect\", the tcpstat collector is active and TCP connection statistics are collected. When set to \"DoNotCollect\", the tcpstat collector is inactive.\n\nPossible enum values:\n - `\"Collect\"` means the collector is active and will produce metrics.\n - `\"DoNotCollect\"` means the collector is inactive and will not produce metrics.",
+          "type": "string",
+          "enum": [
+            "Collect",
+            "DoNotCollect"
+          ]
+        }
+      }
+    },
+    "com.github.openshift.api.config.v1alpha1.NodeExporterCollectorZoneinfoConfig": {
+      "description": "NodeExporterCollectorZoneinfoConfig provides configuration for the zoneinfo collector of the node-exporter agent. The zoneinfo collector exposes per-zone memory page counts, watermarks, and protection thresholds from /proc/zoneinfo. By default, the zoneinfo collector does not collect metrics.",
+      "type": "object",
+      "required": [
+        "collectionPolicy"
+      ],
+      "properties": {
+        "collectionPolicy": {
+          "description": "collectionPolicy declares whether the zoneinfo collector collects metrics. This field is required. Valid values are \"Collect\" and \"DoNotCollect\". When set to \"Collect\", the zoneinfo collector is active and zone memory statistics are collected. When set to \"DoNotCollect\", the zoneinfo collector is inactive.\n\nPossible enum values:\n - `\"Collect\"` means the collector is active and will produce metrics.\n - `\"DoNotCollect\"` means the collector is inactive and will not produce metrics.",
           "type": "string",
           "enum": [
             "Collect",
@@ -14766,6 +14814,10 @@
             "name"
           ],
           "x-kubernetes-list-type": "map"
+        },
+        "messageVersion": {
+          "description": "messageVersion defines the Remote Write message's version to use when writing to the endpoint. When omitted, this means no opinion and the platform is left to choose a reasonable default, which is subject to change over time. The default value is \"V1.0\". When set to \"V1.0\", Prometheus uses the `prometheus.WriteRequest` protobuf message introduced in Remote Write 1.0. When set to \"V2.0\", Prometheus uses the `io.prometheus.write.v2.Request` protobuf message introduced in Remote Write 2.0.",
+          "type": "string"
         },
         "metadataConfig": {
           "description": "metadataConfig configures the sending of series metadata to remote storage. When omitted, no metadata is sent. When set to sendPolicy: Default, metadata is sent using platform-chosen defaults (e.g. send interval 30 seconds). When set to sendPolicy: Custom, metadata is sent using the settings in the custom field (e.g. custom.sendIntervalSeconds).",
