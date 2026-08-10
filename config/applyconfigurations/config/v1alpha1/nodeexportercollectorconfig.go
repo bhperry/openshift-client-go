@@ -100,6 +100,12 @@ type NodeExporterCollectorConfigApplyConfiguration struct {
 	// which is subject to change over time. The current default is to not collect zoneinfo metrics.
 	// Enable when you need visibility into kernel memory zone allocation and pressure.
 	Zoneinfo *NodeExporterCollectorZoneinfoConfigApplyConfiguration `json:"zoneinfo,omitempty"`
+	// nvmExpressSubsystem configures the nvmesubsystem collector, which
+	// collects statistics about NVM Express (NVMe) subsystem devices.
+	// nvmExpressSubsystem is optional.
+	// When omitted, this means no opinion and the platform is left to choose a reasonable default,
+	// which is subject to change over time. The current default is enabled.
+	NVMExpressSubsystem *NodeExporterCollectorNVMExpressSubsystemConfigApplyConfiguration `json:"nvmExpressSubsystem,omitempty"`
 }
 
 // NodeExporterCollectorConfigApplyConfiguration constructs a declarative configuration of the NodeExporterCollectorConfig type for use with
@@ -209,5 +215,13 @@ func (b *NodeExporterCollectorConfigApplyConfiguration) WithDeviceMapperMultipat
 // If called multiple times, the Zoneinfo field is set to the value of the last call.
 func (b *NodeExporterCollectorConfigApplyConfiguration) WithZoneinfo(value *NodeExporterCollectorZoneinfoConfigApplyConfiguration) *NodeExporterCollectorConfigApplyConfiguration {
 	b.Zoneinfo = value
+	return b
+}
+
+// WithNVMExpressSubsystem sets the NVMExpressSubsystem field in the declarative configuration to the given value
+// and returns the receiver, so that objects can be built by chaining "With" function invocations.
+// If called multiple times, the NVMExpressSubsystem field is set to the value of the last call.
+func (b *NodeExporterCollectorConfigApplyConfiguration) WithNVMExpressSubsystem(value *NodeExporterCollectorNVMExpressSubsystemConfigApplyConfiguration) *NodeExporterCollectorConfigApplyConfiguration {
+	b.NVMExpressSubsystem = value
 	return b
 }

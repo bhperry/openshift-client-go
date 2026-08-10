@@ -604,6 +604,8 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 		return &configv1alpha1.NodeExporterCollectorNetClassConfigApplyConfiguration{}
 	case v1alpha1.SchemeGroupVersion.WithKind("NodeExporterCollectorNetDevConfig"):
 		return &configv1alpha1.NodeExporterCollectorNetDevConfigApplyConfiguration{}
+	case v1alpha1.SchemeGroupVersion.WithKind("NodeExporterCollectorNVMExpressSubsystemConfig"):
+		return &configv1alpha1.NodeExporterCollectorNVMExpressSubsystemConfigApplyConfiguration{}
 	case v1alpha1.SchemeGroupVersion.WithKind("NodeExporterCollectorProcessesConfig"):
 		return &configv1alpha1.NodeExporterCollectorProcessesConfigApplyConfiguration{}
 	case v1alpha1.SchemeGroupVersion.WithKind("NodeExporterCollectorSoftirqsConfig"):

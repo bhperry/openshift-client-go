@@ -5031,6 +5031,10 @@ var schemaYAML = typed.YAMLObject(`types:
       type:
         namedType: com.github.openshift.api.config.v1alpha1.NodeExporterCollectorNetDevConfig
       default: {}
+    - name: nvmExpressSubsystem
+      type:
+        namedType: com.github.openshift.api.config.v1alpha1.NodeExporterCollectorNVMExpressSubsystemConfig
+      default: {}
     - name: processes
       type:
         namedType: com.github.openshift.api.config.v1alpha1.NodeExporterCollectorProcessesConfig
@@ -5076,6 +5080,12 @@ var schemaYAML = typed.YAMLObject(`types:
       type:
         scalar: string
 - name: com.github.openshift.api.config.v1alpha1.NodeExporterCollectorMountStatsConfig
+  map:
+    fields:
+    - name: collectionPolicy
+      type:
+        scalar: string
+- name: com.github.openshift.api.config.v1alpha1.NodeExporterCollectorNVMExpressSubsystemConfig
   map:
     fields:
     - name: collectionPolicy
